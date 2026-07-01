@@ -1,10 +1,10 @@
 -- 01_transform.sql
--- Transform stg_branches -> dim_branches
+-- Transform stg_branches -> dim_branch
 -- Cast tipe data + hitung kolom turunan: branch_age_years
 
-TRUNCATE TABLE dim_branches;
+TRUNCATE TABLE dim_branch;
 
-INSERT INTO dim_branches (
+INSERT INTO dim_branch (
     branch_id,
     branch_code,
     branch_name,

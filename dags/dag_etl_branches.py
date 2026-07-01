@@ -1,12 +1,12 @@
 """
 dag_etl_branches.py
 =====================
-ETL pipeline: branches.csv → stg_branches → dim_branches
+ETL pipeline: branches.csv → stg_branches → dim_branch
 
 Task flow:
-    create_tables  (SQLExecuteQueryOperator) : DDL stg_branches & dim_branches
+    create_tables  (SQLExecuteQueryOperator) : DDL stg_branches & dim_branch
     extract_load   (@task Python)            : baca CSV → stg_branches
-    transform      (SQLExecuteQueryOperator) : stg_branches → dim_branches
+    transform      (SQLExecuteQueryOperator) : stg_branches → dim_branch
 
 Airflow Connection:
     conn_id = "postgres_etl"  (tipe: Postgres)
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS stg_branches (
     is_active      VARCHAR(10)
 );
 
-CREATE TABLE IF NOT EXISTS dim_branches (
+CREATE TABLE IF NOT EXISTS dim_branch (
     branch_id         INTEGER       PRIMARY KEY,
     branch_code       VARCHAR(20)   UNIQUE,
     branch_name       VARCHAR(100),
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS dim_branches (
 # ─── DAG ──────────────────────────────────────────────────────────────────────
 @dag(
     dag_id              = "dag_etl_branches",
-    description         = "ETL branches.csv → stg_branches → dim_branches",
+    description         = "ETL branches.csv → stg_branches → dim_branch",
     default_args        = {
         "owner"           : "airflow",
         "retries"         : 1,
@@ -111,7 +111,7 @@ def dag_etl_branches():
         engine.dispose()
         return len(df)
 
-    # ── Task 3: Transform stg_branches → dim_branches ─────────────────────────
+    # ── Task 3: Transform stg_branches → dim_branch ───────────────────────────
     transform = SQLExecuteQueryOperator(
         task_id = "transform",
         conn_id = CONN_ID,

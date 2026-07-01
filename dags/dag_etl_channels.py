@@ -1,12 +1,12 @@
 """
 dag_etl_channels.py
 =====================
-ETL pipeline: channels.csv → stg_channels → dim_channels
+ETL pipeline: channels.csv → stg_channels → dim_channel
 
 Task flow:
-    create_tables  (SQLExecuteQueryOperator) : DDL stg_channels & dim_channels
+    create_tables  (SQLExecuteQueryOperator) : DDL stg_channels & dim_channel
     extract_load   (@task Python)            : baca CSV → stg_channels
-    transform      (SQLExecuteQueryOperator) : stg_channels → dim_channels
+    transform      (SQLExecuteQueryOperator) : stg_channels → dim_channel
 
 Airflow Connection:
     conn_id = "postgres_etl"  (tipe: Postgres)
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS stg_channels (
     description       VARCHAR(200)
 );
 
-CREATE TABLE IF NOT EXISTS dim_channels (
+CREATE TABLE IF NOT EXISTS dim_channel (
     channel_id         INTEGER       PRIMARY KEY,
     channel_code       VARCHAR(20)   UNIQUE,
     channel_name       VARCHAR(100),
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS dim_channels (
 # ─── DAG ──────────────────────────────────────────────────────────────────────
 @dag(
     dag_id              = "dag_etl_channels",
-    description         = "ETL channels.csv → stg_channels → dim_channels",
+    description         = "ETL channels.csv → stg_channels → dim_channel",
     default_args        = {
         "owner"           : "airflow",
         "retries"         : 1,
@@ -104,7 +104,7 @@ def dag_etl_channels():
         engine.dispose()
         return len(df)
 
-    # ── Task 3: Transform stg_channels → dim_channels ─────────────────────────
+    # ── Task 3: Transform stg_channels → dim_channel ──────────────────────────
     transform = SQLExecuteQueryOperator(
         task_id = "transform",
         conn_id = CONN_ID,

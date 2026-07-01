@@ -1,10 +1,10 @@
 -- 01_transform.sql
--- Transform stg_channels -> dim_channels
+-- Transform stg_channels -> dim_channel
 -- Cast tipe data
 
-TRUNCATE TABLE dim_channels;
+TRUNCATE TABLE dim_channel;
 
-INSERT INTO dim_channels (
+INSERT INTO dim_channel (
     channel_id,
     channel_code,
     channel_name,

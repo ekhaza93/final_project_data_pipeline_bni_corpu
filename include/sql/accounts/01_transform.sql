@@ -1,10 +1,10 @@
 -- 01_transform.sql
--- Transform stg_accounts -> dim_accounts
+-- Transform stg_accounts -> dim_account
 -- Cast tipe data + hitung kolom turunan: account_age_years, is_closed, interest_rate_segment
 
-TRUNCATE TABLE dim_accounts;
+TRUNCATE TABLE dim_account;
 
-INSERT INTO dim_accounts (
+INSERT INTO dim_account (
     account_id,
     account_no,
     account_type,

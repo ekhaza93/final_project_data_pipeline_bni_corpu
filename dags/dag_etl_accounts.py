@@ -1,12 +1,12 @@
 """
 dag_etl_accounts.py
 =====================
-ETL pipeline: accounts.csv → stg_accounts → dim_accounts
+ETL pipeline: accounts.csv → stg_accounts → dim_account
 
 Task flow:
-    create_tables  (SQLExecuteQueryOperator) : DDL stg_accounts & dim_accounts
+    create_tables  (SQLExecuteQueryOperator) : DDL stg_accounts & dim_account
     extract_load   (@task Python)            : baca CSV → stg_accounts
-    transform      (SQLExecuteQueryOperator) : stg_accounts → dim_accounts
+    transform      (SQLExecuteQueryOperator) : stg_accounts → dim_account
 
 Airflow Connection:
     conn_id = "postgres_etl"  (tipe: Postgres)
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS stg_accounts (
     branch_id       INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS dim_accounts (
+CREATE TABLE IF NOT EXISTS dim_account (
     account_id            INTEGER       PRIMARY KEY,
     account_no            VARCHAR(20)   UNIQUE,
     account_type          VARCHAR(20),
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS dim_accounts (
 # ─── DAG ──────────────────────────────────────────────────────────────────────
 @dag(
     dag_id              = "dag_etl_accounts",
-    description         = "ETL accounts.csv → stg_accounts → dim_accounts",
+    description         = "ETL accounts.csv → stg_accounts → dim_account",
     default_args        = {
         "owner"           : "airflow",
         "retries"         : 1,
@@ -117,7 +117,7 @@ def dag_etl_accounts():
         engine.dispose()
         return len(df)
 
-    # ── Task 3: Transform stg_accounts → dim_accounts ─────────────────────────
+    # ── Task 3: Transform stg_accounts → dim_account ──────────────────────────
     transform = SQLExecuteQueryOperator(
         task_id = "transform",
         conn_id = CONN_ID,

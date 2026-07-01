@@ -1,9 +1,9 @@
--- Transform: stg_customers → dim_customers
+-- Transform: stg_customers → dim_customer
 -- Cast tipe data, tambah derived columns, deduplikasi
 
-TRUNCATE TABLE dim_customers;
+TRUNCATE TABLE dim_customer;
 
-INSERT INTO dim_customers (
+INSERT INTO dim_customer (
     customer_id,
     customer_code,
     full_name,
