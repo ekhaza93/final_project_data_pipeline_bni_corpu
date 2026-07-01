@@ -19,7 +19,7 @@ standalone_admin_password.txt
 webserver_config.py
 
 # Dataset (file besar, tidak perlu di-repo)
-# include/dataset/*.csv
+include/dataset/*.csv
 
 # ETL init scripts (bisa di-generate ulang)
 etl/init-scripts/
