@@ -181,7 +181,7 @@ open http://localhost:8082
 
 ## Pertanyaan Bisnis & Query Analitik
 
-Query di bawah ini murni untuk analisis (bukan task DAG) — jalankan manual lewat SQL client (psql/DBeaver/dsb) setelah DAG dimensi & fact selesai dijalankan.
+Query di bawah ini murni untuk analisis — jalankan manual lewat SQL client (psql/DBeaver/dsb) setelah DAG dimensi & fact selesai dijalankan.
 
 | # | Pertanyaan Bisnis | Tables | Query |
 |---|---|---|---|
