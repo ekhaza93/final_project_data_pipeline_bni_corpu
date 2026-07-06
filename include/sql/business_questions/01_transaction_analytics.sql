@@ -6,8 +6,8 @@
 -- (A) Volume & nilai transaksi per hari
 SELECT
     d.full_date,
-    COUNT(f.transaction_id)   AS transaction_volume,
-    SUM(f.amount)             AS transaction_value
+    COUNT(f.transaction_id) AS transaction_volume,
+    SUM(f.amount) AS transaction_value
 FROM fact_transactions f
 JOIN dim_date d ON f.transaction_date = d.full_date
 GROUP BY d.full_date
@@ -17,8 +17,8 @@ ORDER BY d.full_date;
 SELECT
     d.year,
     d.week_of_year,
-    COUNT(f.transaction_id)   AS transaction_volume,
-    SUM(f.amount)             AS transaction_value
+    COUNT(f.transaction_id) AS transaction_volume,
+    SUM(f.amount) AS transaction_value
 FROM fact_transactions f
 JOIN dim_date d ON f.transaction_date = d.full_date
 GROUP BY d.year, d.week_of_year
@@ -31,7 +31,7 @@ WITH monthly AS (
         d.month,
         d.month_name,
         COUNT(f.transaction_id) AS transaction_volume,
-        SUM(f.amount)           AS transaction_value
+        SUM(f.amount) AS transaction_value
     FROM fact_transactions f
     JOIN dim_date d ON f.transaction_date = d.full_date
     GROUP BY d.year, d.month, d.month_name
@@ -42,24 +42,24 @@ SELECT
     month_name,
     transaction_volume,
     transaction_value,
-    LAG(transaction_value) OVER (ORDER BY year, month)      AS prev_month_value,
+    LAG(transaction_value) OVER (ORDER BY year, month) AS prev_month_value,
     ROUND(
         (transaction_value - LAG(transaction_value) OVER (ORDER BY year, month))
         / NULLIF(LAG(transaction_value) OVER (ORDER BY year, month), 0) * 100
-    , 2)                                                     AS mom_growth_pct
+    , 2) AS mom_growth_pct
 FROM monthly
 ORDER BY year, month;
 
--- (D) Breakdown volume & nilai transaksi per bulan per channel (bonus: lihat kontribusi channel)
+-- (D) Breakdown volume & nilai transaksi per bulan per channel
 SELECT
     d.year,
     d.month,
     d.month_name,
     ch.channel_name,
     COUNT(f.transaction_id) AS transaction_volume,
-    SUM(f.amount)           AS transaction_value
+    SUM(f.amount) AS transaction_value
 FROM fact_transactions f
-JOIN dim_date d    ON f.transaction_date = d.full_date
+JOIN dim_date d ON f.transaction_date = d.full_date
 JOIN dim_channel ch ON f.channel_id = ch.channel_id
 GROUP BY d.year, d.month, d.month_name, ch.channel_name
 ORDER BY d.year, d.month, transaction_value DESC;

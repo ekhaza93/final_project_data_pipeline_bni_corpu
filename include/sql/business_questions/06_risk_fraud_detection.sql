@@ -19,7 +19,7 @@ SELECT
     f.transaction_at
 FROM fact_transactions f
 JOIN dim_customer c ON f.customer_id = c.customer_id
-JOIN dim_channel ch  ON f.channel_id = ch.channel_id
+JOIN dim_channel ch ON f.channel_id = ch.channel_id
 CROSS JOIN stats s
 WHERE f.amount > s.p95_amount
 ORDER BY f.amount DESC;
@@ -30,8 +30,8 @@ SELECT
     c.full_name,
     c.segment,
     f.transaction_date,
-    COUNT(f.transaction_id)  AS daily_transaction_count,
-    SUM(f.amount)            AS daily_total_value
+    COUNT(f.transaction_id) AS daily_transaction_count,
+    SUM(f.amount) AS daily_total_value
 FROM fact_transactions f
 JOIN dim_customer c ON f.customer_id = c.customer_id
 GROUP BY c.customer_id, c.full_name, c.segment, f.transaction_date
@@ -47,7 +47,7 @@ SELECT
     COUNT(f.transaction_id) AS failed_count
 FROM fact_transactions f
 JOIN dim_customer c ON f.customer_id = c.customer_id
-JOIN dim_channel ch  ON f.channel_id = ch.channel_id
+JOIN dim_channel ch ON f.channel_id = ch.channel_id
 WHERE f.status = 'FAILED'
 GROUP BY c.customer_id, c.full_name, c.segment, ch.channel_name
 HAVING COUNT(f.transaction_id) >= 3
@@ -62,9 +62,9 @@ WITH stats AS (
 per_customer AS (
     SELECT
         f.customer_id,
-        COUNT(f.transaction_id)                                        AS total_transactions,
+        COUNT(f.transaction_id) AS total_transactions,
         COUNT(f.transaction_id) FILTER (WHERE f.amount > s.p95_amount) AS large_amount_count,
-        COUNT(f.transaction_id) FILTER (WHERE f.status = 'FAILED')     AS failed_count
+        COUNT(f.transaction_id) FILTER (WHERE f.status = 'FAILED') AS failed_count
     FROM fact_transactions f
     CROSS JOIN stats s
     GROUP BY f.customer_id
@@ -82,19 +82,3 @@ JOIN dim_customer c ON p.customer_id = c.customer_id
 WHERE p.large_amount_count > 0 OR p.failed_count >= 3
 ORDER BY risk_score DESC
 LIMIT 50;
-
--- (E) Bonus: jika ingin memakai label fraud yang sudah ada (fact_fraud_labels, di luar
---     tabel yang diminta soal) untuk validasi silang terhadap hasil deteksi anomali di atas
--- SELECT
---     fl.transaction_id,
---     fl.fraud_type,
---     fl.fraud_score,
---     fl.fraud_risk_level,
---     c.full_name,
---     ch.channel_name
--- FROM fact_fraud_labels fl
--- JOIN fact_transactions f ON f.transaction_id = fl.transaction_id
--- JOIN dim_customer c       ON f.customer_id = c.customer_id
--- JOIN dim_channel ch       ON f.channel_id = ch.channel_id
--- WHERE fl.is_fraud = TRUE
--- ORDER BY fl.fraud_score DESC;

@@ -9,8 +9,8 @@ SELECT
     ch.channel_name,
     ch.channel_category,
     ch.is_digital,
-    COUNT(f.transaction_id)   AS transaction_count,
-    SUM(f.amount)             AS total_transaction_value
+    COUNT(f.transaction_id) AS transaction_count,
+    SUM(f.amount) AS total_transaction_value
 FROM fact_transactions f
 JOIN dim_channel ch ON f.channel_id = ch.channel_id
 GROUP BY ch.channel_name, ch.channel_category, ch.is_digital
@@ -22,12 +22,11 @@ SELECT
     ch.is_digital,
     COUNT(f.transaction_id) AS transaction_count,
     ROUND(
-        100.0 * COUNT(f.transaction_id)
-        / SUM(COUNT(f.transaction_id)) OVER (PARTITION BY d.year)
-    , 2)                                                       AS pct_of_year
+        100.0 * COUNT(f.transaction_id) / SUM(COUNT(f.transaction_id)) OVER (PARTITION BY d.year), 2
+    ) AS pct_of_year
 FROM fact_transactions f
 JOIN dim_channel ch ON f.channel_id = ch.channel_id
-JOIN dim_date d     ON f.transaction_date = d.full_date
+JOIN dim_date d ON f.transaction_date = d.full_date
 GROUP BY d.year, ch.is_digital
 ORDER BY d.year, ch.is_digital;
 
@@ -39,11 +38,10 @@ SELECT
     ch.is_digital,
     COUNT(f.transaction_id) AS transaction_count,
     ROUND(
-        100.0 * COUNT(f.transaction_id)
-        / SUM(COUNT(f.transaction_id)) OVER (PARTITION BY d.year, d.month)
-    , 2)                                                       AS pct_of_month
+        100.0 * COUNT(f.transaction_id) / SUM(COUNT(f.transaction_id)) OVER (PARTITION BY d.year, d.month), 2
+    ) AS pct_of_month
 FROM fact_transactions f
 JOIN dim_channel ch ON f.channel_id = ch.channel_id
-JOIN dim_date d     ON f.transaction_date = d.full_date
+JOIN dim_date d ON f.transaction_date = d.full_date
 GROUP BY d.year, d.month, d.month_name, ch.is_digital
 ORDER BY d.year, d.month, ch.is_digital;

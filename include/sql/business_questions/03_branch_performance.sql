@@ -9,8 +9,8 @@ SELECT
     b.branch_id,
     b.branch_code,
     b.branch_name,
-    COUNT(f.transaction_id)   AS transaction_count,
-    SUM(f.amount)             AS total_transaction_value
+    COUNT(f.transaction_id) AS transaction_count,
+    SUM(f.amount) AS total_transaction_value
 FROM fact_transactions f
 JOIN dim_branch b ON f.branch_id = b.branch_id
 GROUP BY b.region, b.branch_id, b.branch_code, b.branch_name
@@ -30,7 +30,7 @@ FROM (
         b.branch_id,
         b.branch_name,
         COUNT(f.transaction_id) AS transaction_count,
-        SUM(f.amount)           AS total_transaction_value,
+        SUM(f.amount) AS total_transaction_value,
         RANK() OVER (PARTITION BY b.region ORDER BY SUM(f.amount) DESC) AS branch_rank
     FROM fact_transactions f
     JOIN dim_branch b ON f.branch_id = b.branch_id
@@ -46,10 +46,10 @@ SELECT
     b.branch_id,
     b.branch_name,
     COUNT(f.transaction_id) AS transaction_count,
-    SUM(f.amount)           AS total_transaction_value
+    SUM(f.amount) AS total_transaction_value
 FROM fact_transactions f
 JOIN dim_branch b ON f.branch_id = b.branch_id
-JOIN dim_date d    ON f.transaction_date = d.full_date
+JOIN dim_date d ON f.transaction_date = d.full_date
 GROUP BY d.year, b.region, b.branch_id, b.branch_name
 ORDER BY d.year, total_transaction_value DESC;
 
@@ -57,8 +57,8 @@ ORDER BY d.year, total_transaction_value DESC;
 SELECT
     b.region,
     COUNT(DISTINCT b.branch_id) AS branch_count,
-    COUNT(f.transaction_id)     AS transaction_count,
-    SUM(f.amount)               AS total_transaction_value
+    COUNT(f.transaction_id) AS transaction_count,
+    SUM(f.amount) AS total_transaction_value
 FROM fact_transactions f
 JOIN dim_branch b ON f.branch_id = b.branch_id
 GROUP BY b.region
