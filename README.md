@@ -26,15 +26,28 @@ Setelah fork berhasil, semua langkah selanjutnya dilakukan dari repo hasil fork 
 ├── dags/                          # Airflow DAG files
 │   ├── dag_etl_bank_transactions.py
 │   ├── dag_el_churn.py
-│   └── dag_etl_customers.py
+│   ├── dag_etl_customers.py
+│   ├── dag_etl_accounts.py
+│   ├── dag_etl_branches.py
+│   ├── dag_etl_channels.py
+│   ├── dag_etl_dim_date.py
+│   ├── dag_etl_transactions.py
+│   └── dag_etl_fraud_labels.py
 ├── include/
 │   ├── dataset/                   # Source CSV files (generate dulu, lihat langkah 4)
 │   ├── script/                    # Python ETL scripts
 │   │   ├── generate_banking_dataset.py
 │   │   └── etl_bank_transactions.py
-│   └── sql/                       # SQL transform files
+│   └── sql/                       # SQL transform files & query analitik
 │       ├── churn/
-│       └── customers/
+│       ├── customers/
+│       ├── accounts/
+│       ├── branches/
+│       ├── channels/
+│       ├── dim_date/
+│       ├── transactions/
+│       ├── fraud_labels/
+│       └── business_questions/    # Query untuk menjawab pertanyaan bisnis
 ├── docker-compose.yaml
 ├── .env.example                   # Template environment variables
 └── requirements.txt
@@ -156,7 +169,28 @@ open http://localhost:8082
 |---|---|---|---|
 | `dag_etl_bank_transactions` | `bank_transactions_data_2.csv` | `trx_sample` | ETL transaksi bank |
 | `dag_el_churn` | `churn.csv` | `churn_clean` | EL + transform data churn |
-| `dag_etl_customers` | `customers.csv` | `dim_customers` | ETL dimensi customer |
+| `dag_etl_customers` | `customers.csv` | `dim_customer` | ETL dimensi customer |
+| `dag_etl_accounts` | `accounts.csv` | `dim_account` | ETL dimensi account |
+| `dag_etl_branches` | `branches.csv` | `dim_branch` | ETL dimensi branch |
+| `dag_etl_channels` | `channels.csv` | `dim_channel` | ETL dimensi channel |
+| `dag_etl_dim_date` | `dim_date.csv` | `dim_date` | ETL dimensi date |
+| `dag_etl_transactions` | `transactions.csv` | `fact_transactions` | ETL fact transaksi |
+| `dag_etl_fraud_labels` | `fraud_labels.csv` | `fact_fraud_labels` | ETL fact fraud label |
+
+---
+
+## Pertanyaan Bisnis & Query Analitik
+
+Query di bawah ini murni untuk analisis (bukan task DAG) — jalankan manual lewat SQL client (psql/DBeaver/dsb) setelah DAG dimensi & fact selesai dijalankan.
+
+| # | Pertanyaan Bisnis | Tables | Query |
+|---|---|---|---|
+| 01 | Berapa total volume dan nilai transaksi per hari, minggu, dan bulan? Apa tren pertumbuhannya? | `dim_date`, `dim_channel`, `fact_transactions` | [01_transaction_analytics.sql](include/sql/business_questions/01_transaction_analytics.sql) |
+| 02 | Siapa nasabah paling aktif berdasarkan frekuensi dan nilai transaksi? Bagaimana distribusi per segmen (Retail/Priority/VIP)? | `dim_customer`, `dim_account`, `fact_transactions` | [02_customer_360.sql](include/sql/business_questions/02_customer_360.sql) |
+| 03 | Cabang mana yang memiliki performa tertinggi berdasarkan jumlah transaksi dan total nilai transaksi per region? | `dim_branch`, `dim_date`, `fact_transactions` | [03_branch_performance.sql](include/sql/business_questions/03_branch_performance.sql) |
+| 04 | Channel apa yang paling banyak digunakan nasabah (ATM, Mobile, Teller, Internet Banking)? Bagaimana tren migrasi ke digital? | `dim_channel`, `dim_date`, `fact_transactions` | [04_channel_analysis.sql](include/sql/business_questions/04_channel_analysis.sql) |
+| 05 | Produk rekening mana (Tabungan/Giro/Deposito) yang menghasilkan volume transaksi dan saldo rata-rata tertinggi? | `dim_account`, `dim_date`, `fact_transactions` | [05_product_performance.sql](include/sql/business_questions/05_product_performance.sql) |
+| 06 | Adakah transaksi anomali (nilai sangat besar, frekuensi tidak wajar, atau status FAILED berulang) yang perlu diwaspadai? | `dim_customer`, `dim_channel`, `fact_transactions` | [06_risk_fraud_detection.sql](include/sql/business_questions/06_risk_fraud_detection.sql) |
 
 ---
 
